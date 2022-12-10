@@ -21,9 +21,8 @@ pub fn codegen(env: &mut ModuleEnv, ast: Expression) -> Value {
 
         Expression::Assign(data) => nop(env),
 
-        Expression::Fn(data) => statement::fn_(env, *data),
+        Expression::Function(data) => statement::fn_(env, *data),
         Expression::Call(data) => nop(env),
-        Expression::CallIndirect(data) => nop(env),
         Expression::Return(data) => statement::return_(env, *data),
     }
 }

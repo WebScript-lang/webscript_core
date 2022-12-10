@@ -13,9 +13,8 @@ pub enum Expression {
 
     Assign(Box<AssignData>),
 
-    Fn(Box<FnData>),
+    Function(Box<FunctionData>),
     Call(Box<CallData>),
-    CallIndirect(Box<CallIndirectData>),
     Return(Box<Expression>),
 }
 
@@ -33,7 +32,7 @@ pub struct AssignData {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct FnData {
+pub struct FunctionData {
     pub name: Option<String>,
     pub args: Vec<(String, String)>,
     pub return_type: Option<String>,
@@ -42,12 +41,6 @@ pub struct FnData {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CallData {
-    pub name: String,
-    pub args: Vec<Expression>,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct CallIndirectData {
     pub ref_: Expression,
     pub args: Vec<Expression>,
 }

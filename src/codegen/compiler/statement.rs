@@ -9,7 +9,7 @@ use crate::{
         values::{Function, Integer},
         AnyType, AnyValue, FnName, Store,
     },
-    parser::{Expression, FnData},
+    parser::{Expression, FunctionData},
 };
 
 pub fn return_(env: &mut ModuleEnv, value: Expression) -> Value {
@@ -18,7 +18,7 @@ pub fn return_(env: &mut ModuleEnv, value: Expression) -> Value {
     (env.op.return_(value.expr), value.value).into()
 }
 
-pub fn fn_(env: &mut ModuleEnv, data: FnData) -> Value {
+pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> Value {
     // Get args types
     let mut args = Vec::with_capacity(data.args.len());
     for (name, type_name) in &data.args {
@@ -84,5 +84,5 @@ pub fn fn_(env: &mut ModuleEnv, data: FnData) -> Value {
         body.expr,
     );
 
-    (env.op.nop(), AnyValue::Fn(function)).into()
+    (env.op.nop(), AnyValue::Function(function)).into()
 }

@@ -50,6 +50,6 @@ impl Deref for Function {
 
 impl Into<AnyValue> for Function {
     fn into(self) -> AnyValue {
-        AnyValue::Fn(self)
+        AnyValue::Function(self)
     }
 }

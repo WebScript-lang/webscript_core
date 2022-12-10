@@ -13,7 +13,7 @@ pub enum AnyValue {
     // Reference Types
     // Object(Object),
     // String(String),
-    Fn(Function),
+    Function(Function),
     // Class(Class),
     // Ref(Box<AnyValue>),
     Type(AnyType),
@@ -73,7 +73,7 @@ impl AnyValue {
     }
 
     pub fn into_function(self) -> Option<Function> {
-        if let AnyValue::Fn(value) = self {
+        if let AnyValue::Function(value) = self {
             Some(value)
         } else {
             None
@@ -96,7 +96,7 @@ impl Display for AnyValue {
             AnyValue::Integer(_) => write!(f, "Integer"),
             // AnyValue::Number(_) => write!(f, "Number"),
             // AnyValue::Boolean(_) => write!(f, "Boolean"),
-            AnyValue::Fn(function) => {
+            AnyValue::Function(function) => {
                 // write!(f, "fn {}(", function.name().to_string())?;
                 if let FnName::Name(name) = function.name() {
                     write!(f, "fn {name}(")?;
