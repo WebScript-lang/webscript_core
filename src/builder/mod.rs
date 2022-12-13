@@ -1,5 +1,7 @@
 use std::ffi::CString;
+use std::os::raw::c_char;
 
+mod block;
 mod export;
 mod expr;
 mod function;
@@ -17,9 +19,13 @@ pub use type_::Type;
 pub use instructions::int32::Int32;
 pub use instructions::op::Op;
 
-fn string_to_ptr(string: &Option<String>) -> CString {
+fn cstring(string: Option<String>) -> Option<CString> {
+    string.map(|string| CString::new(string).unwrap())
+}
+
+fn cstring_to_ptr(string: &Option<CString>) -> *const c_char {
     match string {
-        Some(name) => CString::new(name.as_str()).unwrap(),
-        None => CString::default(),
+        Some(string) => string.as_ptr(),
+        None => 0 as *const c_char,
     }
 }

@@ -15,7 +15,7 @@ impl Module {
         args: &[Type],
         results: &[Type],
         locals: &[Type],
-        body: Expr,
+        body: &[Expr],
     ) -> Function {
         Function::new(self, name, args, results, locals, body)
     }

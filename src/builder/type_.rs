@@ -4,6 +4,7 @@ use binaryen_sys::{BinaryenType, BinaryenTypeCreate, BinaryenTypeInt32, Binaryen
 pub enum Type {
     Null,
     Int32,
+    Other(BinaryenType),
 }
 
 impl Type {
@@ -22,6 +23,7 @@ impl Into<BinaryenType> for Type {
         match self {
             Type::Null => unsafe { BinaryenTypeNone() },
             Type::Int32 => unsafe { BinaryenTypeInt32() },
+            Type::Other(type_) => type_,
         }
     }
 }
@@ -34,7 +36,7 @@ impl From<BinaryenType> for Type {
             } else if type_ == BinaryenTypeInt32() {
                 Type::Int32
             } else {
-                panic!("Wrong type")
+                Type::Other(type_)
             }
         }
     }

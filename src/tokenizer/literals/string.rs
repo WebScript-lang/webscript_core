@@ -1,7 +1,7 @@
 use combine::parser::{char, repeat, sequence, token, Parser};
 use combine::stream::RangeStream;
 
-use crate::tokenizer::{separator, Token};
+use crate::tokenizer::{ignore_spaces, separator, Token};
 
 pub fn string<'src, I>() -> impl Parser<I, Output = Token> + 'src
 where
@@ -26,8 +26,10 @@ where
         )
     };
 
-    string('"')
-        .or(string('\''))
-        .skip(separator())
-        .map(|s| Token::String(s))
+    ignore_spaces(
+        string('"')
+            .or(string('\''))
+            .skip(separator())
+            .map(|s| Token::String(s)),
+    )
 }

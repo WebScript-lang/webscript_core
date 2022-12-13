@@ -2,7 +2,6 @@ use std::{env, path::PathBuf};
 
 use codegen::Module;
 use nscript::Environment;
-use parser::{Expression, FunctionData};
 
 mod builder;
 mod codegen;
@@ -42,25 +41,39 @@ fn main() {
 
     let tokens = tokenizer::parse(script.as_str());
 
-    println!("{tokens:?}");
+    for token in &tokens {
+        println!(
+            "[{}:{} {}:{}] {}",
+            token.start.line, token.start.column, token.end.line, token.end.column, token.value
+        );
+    }
 
-    // let ast = Expression::Function(Box::new(FunctionData {
-    //     name: Some("add".into()),
-    //     args: vec![
-    //         ("a".into(), "Integer".into()),
-    //         ("b".into(), "Integer".into()),
-    //     ],
-    //     return_type: Some("Integer".into()),
-    //     body: Expression::Return(Box::new(Expression::Add(Box::new((
-    //         Expression::Identifier("a".into()),
-    //         Expression::Identifier("b".into()),
-    //     ))))),
-    // }));
+    println!("\n ----- \n");
 
-    // let env = Environment::new();
+    let ast = match parser::parse(&tokens) {
+        Ok(exprs) => {
+            for expr in &exprs {
+                println!("{expr:?}");
+            }
 
-    // let wasm = Module::compile(&env, "main.ns".into(), ast);
+            exprs
+        }
+        Err(err) => {
+            let err = err
+                .map_position(|pos| tokens[pos].start)
+                .map_token(|token| token.value);
 
-    // // wasm.optimize();
-    // wasm.print();
+            println!("{err:?}");
+            panic!()
+        }
+    };
+
+    println!("\n ----- \n");
+
+    let env = Environment::new();
+
+    let wasm = Module::compile(&env, "main.ns".into(), ast);
+
+    // wasm.optimize();
+    wasm.print();
 }

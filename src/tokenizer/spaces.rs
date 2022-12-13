@@ -36,3 +36,12 @@ where
 {
     combinator::not_followed_by(char::alpha_num())
 }
+
+pub fn ignore_spaces<'src, I, P>(parser: P) -> impl Parser<I, Output = P::Output> + 'src
+where
+    I: RangeStream<Token = char, Range = &'src str> + 'src,
+    P: Parser<I> + 'src,
+{
+    // char::spaces().with(parser).skip(char::spaces())
+    parser
+}

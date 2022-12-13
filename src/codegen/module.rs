@@ -16,7 +16,7 @@ pub struct ModuleEnv<'a> {
 }
 
 impl Module {
-    pub fn compile(env: &Environment, path: String, ast: Expression) -> Self {
+    pub fn compile(env: &Environment, path: String, expressions: Vec<Expression>) -> Self {
         let builder = builder::Module::new();
         let module = nscript::Module::new(path);
 
@@ -30,7 +30,9 @@ impl Module {
                 builder,
             };
 
-            codegen::codegen(&mut module_env, ast);
+            for expr in expressions {
+                codegen::codegen(&mut module_env, expr);
+            }
 
             module_env.builder
         };

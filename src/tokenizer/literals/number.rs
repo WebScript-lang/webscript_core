@@ -1,7 +1,7 @@
 use combine::parser::{char, choice, combinator, range, Parser};
 use combine::stream::RangeStream;
 
-use crate::tokenizer::{separator, Token};
+use crate::tokenizer::{ignore_spaces, separator, Token};
 
 pub fn number<'src, I>() -> impl Parser<I, Output = Token> + 'src
 where
@@ -43,9 +43,11 @@ where
         num.parse::<f64>().unwrap()
     });
 
-    choice::choice((
-        combinator::attempt(number1.skip(separator())),
-        combinator::attempt(number2.skip(separator())),
-    ))
-    .map(|num| Token::Number(num))
+    ignore_spaces(
+        choice::choice((
+            combinator::attempt(number1.skip(separator())),
+            combinator::attempt(number2.skip(separator())),
+        ))
+        .map(|num| Token::Number(num)),
+    )
 }

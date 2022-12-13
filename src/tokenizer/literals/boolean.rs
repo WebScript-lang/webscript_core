@@ -1,4 +1,4 @@
-use crate::tokenizer::{separator, Token};
+use crate::tokenizer::{ignore_spaces, separator, Token};
 use combine::parser::{choice, range, Parser};
 use combine::stream::RangeStream;
 
@@ -14,5 +14,5 @@ where
         .with(separator())
         .map(|_| Token::Boolean(false));
 
-    choice::or(true_, false_)
+    ignore_spaces(choice::or(true_, false_))
 }

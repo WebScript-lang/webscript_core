@@ -1,4 +1,4 @@
-use crate::tokenizer::{separator, Token};
+use crate::tokenizer::{ignore_spaces, separator, Token};
 use combine::parser::{choice, range, Parser};
 use combine::stream::RangeStream;
 
@@ -29,5 +29,5 @@ where
         .skip(separator())
         .map(|s: &str| s.parse::<i32>().unwrap());
 
-    choice::choice((hex, octal, binary, dec)).map(|i: i32| Token::Integer(i))
+    ignore_spaces(choice::choice((hex, octal, binary, dec)).map(|i: i32| Token::Integer(i)))
 }

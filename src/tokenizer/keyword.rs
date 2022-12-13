@@ -41,6 +41,7 @@ pub enum Keyword {
     Finally,
     Throw,
     Static,
+    Final,
     Get,
     Set,
 }
@@ -61,7 +62,7 @@ pub fn keyword<'src, I>() -> impl Parser<I, Output = Token> + 'src
 where
     I: RangeStream<Token = char, Range = &'src str> + 'src,
 {
-    let keyword1 = choice::choice((
+    let keywords1 = choice::choice((
         parse_keyword("this").map(|_| Token::Keyword(Keyword::This)),
         parse_keyword("typeof").map(|_| Token::Keyword(Keyword::Typeof)),
         parse_keyword("extends").map(|_| Token::Keyword(Keyword::Extends)),
@@ -80,10 +81,10 @@ where
         parse_keyword("import").map(|_| Token::Keyword(Keyword::Import)),
         parse_keyword("export").map(|_| Token::Keyword(Keyword::Export)),
         parse_keyword("from").map(|_| Token::Keyword(Keyword::From)),
-        parse_keyword("return").map(|_| Token::Keyword(Keyword::Return)),
     ));
 
-    let keyword2 = choice::choice((
+    let keywords2 = choice::choice((
+        parse_keyword("return").map(|_| Token::Keyword(Keyword::Return)),
         parse_keyword("break").map(|_| Token::Keyword(Keyword::Break)),
         parse_keyword("continue").map(|_| Token::Keyword(Keyword::Continue)),
         parse_keyword("default").map(|_| Token::Keyword(Keyword::Default)),
@@ -100,9 +101,10 @@ where
         parse_keyword("finally").map(|_| Token::Keyword(Keyword::Finally)),
         parse_keyword("throw").map(|_| Token::Keyword(Keyword::Throw)),
         parse_keyword("static").map(|_| Token::Keyword(Keyword::Static)),
+        parse_keyword("final").map(|_| Token::Keyword(Keyword::Final)),
         parse_keyword("get").map(|_| Token::Keyword(Keyword::Get)),
         parse_keyword("set").map(|_| Token::Keyword(Keyword::Set)),
     ));
 
-    keyword1.or(keyword2)
+    combinator::attempt(keywords1.or(keywords2))
 }

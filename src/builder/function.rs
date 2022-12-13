@@ -1,6 +1,8 @@
+use std::ffi::CString;
+
 use binaryen_sys::*;
 
-use super::{string_to_ptr, type_::Type, Expr, Module};
+use super::{block::block, cstring, cstring_to_ptr, type_::Type, Expr, Module};
 
 #[derive(Clone, Copy)]
 pub struct Function(BinaryenFunctionRef);
@@ -12,19 +14,23 @@ impl Function {
         params: &[Type],
         results: &[Type],
         locals: &[Type],
-        body: Expr,
+        body: &[Expr],
     ) -> Self {
         let mut locals = locals
             .iter()
             .map(|type_| (*type_).into())
             .collect::<Vec<BinaryenType>>();
 
+        let results = Type::from_array(&results);
+        let body = block(module, None, body, results.into());
+        let name = cstring(Some(name));
+
         unsafe {
             Function(BinaryenAddFunction(
                 module.into(),
-                string_to_ptr(&Some(name)).as_ptr(),
+                cstring_to_ptr(&name),
                 Type::from_array(&params),
-                Type::from_array(&results),
+                results,
                 locals.as_mut_ptr(),
                 locals.len() as u32,
                 body.into(),

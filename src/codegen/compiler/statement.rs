@@ -73,7 +73,10 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> Value {
     }
 
     // Compile function's body
-    let body = codegen(env, data.body);
+    let mut body = Vec::with_capacity(data.body.len());
+    for expr in data.body {
+        body.push(codegen(env, expr).expr);
+    }
 
     // Add function to a builder module
     env.builder.add_function(
@@ -81,7 +84,7 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> Value {
         &builder_args,
         &to_builder_type(&return_type),
         &[],
-        body.expr,
+        &body,
     );
 
     (env.op.nop(), AnyValue::Function(function)).into()
