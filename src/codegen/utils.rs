@@ -15,8 +15,8 @@ pub fn get_type(state: &StateMutRef, type_name: &str) -> AnyType {
 /// Convert `AnyType` to `builder::Type`
 pub fn to_builder_type(type_: &AnyType) -> Vec<Type> {
     match type_ {
-        AnyType::Null => vec![Type::Null],
+        AnyType::Null => vec![],
         AnyType::Integer => vec![Type::Int32],
-        AnyType::Fn => panic!("Wrong type"),
+        AnyType::Function => vec![],
     }
 }

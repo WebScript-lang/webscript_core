@@ -28,12 +28,12 @@ parser! {
 
 // Punctuator
 parser! {
-/// Check if token is a punctuator.
-pub fn punctuator[I](punctuator: Punctuator)(I) -> ()
-where [ I: Stream<Token=TokenWithPosition> ] {
+    /// Check if token is a punctuator.
+    pub fn punctuator[I](punctuator: Punctuator)(I) -> ()
+    where [ I: Stream<Token=TokenWithPosition> ] {
 
-    token::satisfy(|token: TokenWithPosition| token.value == Token::Punctuator(*punctuator)).map(|_| ())
-}
+        token::satisfy(|token: TokenWithPosition| token.value == Token::Punctuator(*punctuator)).map(|_| ())
+    }
 }
 
 // Operator

@@ -7,7 +7,8 @@ use combine::{optional, parser, parser::repeat, Stream};
 parser! {
     /// Syntax:
     /// ```
-    /// fn <identifier> ( <identifier> : <type> , )* [-> <type>] { <expression>* }
+    /// fn <identifier> ( <param>* ) [-> <type>] { <expression>* }
+    /// param ::= <identifier> : <type> ,
     /// ```
     pub fn fn_[I]()(I) -> Expression
     where [ I: Stream<Token=TokenWithPosition> ] {

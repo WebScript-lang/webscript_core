@@ -72,7 +72,7 @@ fn main() {
 
     let env = Environment::new();
 
-    let wasm = Module::compile(&env, "main.ns".into(), ast);
+    let wasm = Module::compile(&env, path.to_str().unwrap().into(), ast, true);
 
     // wasm.optimize();
     wasm.print();

@@ -2,7 +2,7 @@ use crate::{
     parser::{tokens::*, Expression},
     tokenizer::TokenWithPosition,
 };
-use combine::{between, choice, parser, Stream};
+use combine::{between, choice, optional, parser, parser::repeat, Stream};
 
 use self::op9_logical::logical_or_operation;
 
@@ -37,6 +37,8 @@ mod op8_bitwise;
 mod op9_logical;
 
 pub use op10_assignment::assignment_operation;
+
+use super::CallData;
 
 parser! {
     pub fn operation[I]()(I) -> Expression
@@ -80,6 +82,24 @@ parser! {
             parenthesis(),
             literal(),
             identifier().map(|name| Expression::Identifier(name)),
-        ))
+        )).and(
+            optional(repeat::many1(
+                between( // function call
+                    punctuator(Punctuator::LeftParen),
+                    punctuator(Punctuator::RightParen),
+                    repeat::sep_end_by(operation(), punctuator(Punctuator::Comma)),
+                )
+            ))
+        ).map(|(expr, calls): (_, Option<Vec<_>>)|
+            if let Some(calls) = calls {
+                let mut expr = expr;
+                for args in calls {
+                    expr = Expression::Call(Box::new(CallData { ref_: expr, args }));
+                }
+                expr
+            } else {
+                expr
+            }
+        )
     }
 }

@@ -1,5 +1,7 @@
 use std::fmt::{Display, Error, Formatter};
 
+use super::AnyValue;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum AnyType {
     // Value types
@@ -11,7 +13,7 @@ pub enum AnyType {
     // Reference Types
     // Object,
     // String,
-    Fn,
+    Function,
     // Class,
     // Ref(Box<AnyType>),
 
@@ -29,7 +31,13 @@ impl AnyType {
     }
 
     pub fn is_function(&self) -> bool {
-        matches!(self, AnyType::Fn)
+        matches!(self, AnyType::Function)
+    }
+}
+
+impl Into<AnyValue> for AnyType {
+    fn into(self) -> AnyValue {
+        AnyValue::Type(self)
     }
 }
 
@@ -41,7 +49,7 @@ impl Display for AnyType {
             // AnyType::Boolean => write!(f, "Boolean"),
             // AnyType::Number => write!(f, "Number"),
             // AnyType::String => write!(f, "String"),
-            AnyType::Fn => write!(f, "Function"),
+            AnyType::Function => write!(f, "Function"),
         }
     }
 }

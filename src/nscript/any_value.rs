@@ -20,6 +20,15 @@ pub enum AnyValue {
 }
 
 impl AnyValue {
+    pub fn get_type(&self) -> AnyType {
+        match self {
+            AnyValue::Null => AnyType::Null,
+            AnyValue::Integer(_) => AnyType::Integer,
+            AnyValue::Function(_) => AnyType::Function,
+            AnyValue::Type(type_) => type_.clone(),
+        }
+    }
+
     pub fn is_null(&self) -> bool {
         matches!(self, AnyValue::Null)
     }
@@ -36,9 +45,9 @@ impl AnyValue {
     //     matches!(self, AnyValue::Boolean(_))
     // }
 
-    // pub fn is_function(&self) -> bool {
-    //     matches!(self, AnyValue::Function(_))
-    // }
+    pub fn is_function(&self) -> bool {
+        matches!(self, AnyValue::Function(_))
+    }
 
     // pub fn is_object(&self) -> bool {
     //     matches!(self, AnyValue::Object(_))

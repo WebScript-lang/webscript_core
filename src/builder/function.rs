@@ -37,4 +37,24 @@ impl Function {
             ))
         }
     }
+
+    pub fn call(module: &Module, name: String, params: &[Expr], results: &[Type]) -> Expr {
+        let name = cstring(Some(name));
+
+        let mut args = Vec::with_capacity(params.len());
+        for param in params {
+            args.push((*param).into());
+        }
+
+        unsafe {
+            BinaryenCall(
+                module.into(),
+                cstring_to_ptr(&name),
+                args.as_mut_ptr(),
+                args.len() as u32,
+                Type::from_array(&results),
+            )
+            .into()
+        }
+    }
 }

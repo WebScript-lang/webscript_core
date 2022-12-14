@@ -16,13 +16,19 @@ pub struct ModuleEnv<'a> {
 }
 
 impl Module {
-    pub fn compile(env: &Environment, path: String, expressions: Vec<Expression>) -> Self {
+    pub fn compile(
+        env: &Environment,
+        path: String,
+        expressions: Vec<Expression>,
+        is_main: bool,
+    ) -> Self {
         let builder = builder::Module::new();
         let module = nscript::Module::new(path);
 
         let builder = {
             let state = module.state_mut();
 
+            // Create module environment
             let mut module_env = ModuleEnv {
                 state,
                 op: builder.op(),
@@ -30,8 +36,19 @@ impl Module {
                 builder,
             };
 
+            // Execute global instructions
+            let mut body = Vec::with_capacity(expressions.len());
             for expr in expressions {
-                codegen::codegen(&mut module_env, expr);
+                body.push(codegen::codegen(&mut module_env, expr).expr);
+            }
+
+            // Add main function to the builder module
+            if is_main {
+                module_env
+                    .builder
+                    .add_function("main".into(), &[], &[], &[], &body);
+
+                module_env.builder.add_export("main".into(), None);
             }
 
             module_env.builder

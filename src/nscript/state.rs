@@ -13,6 +13,7 @@ impl State {
         // Insert global types
         global.insert("null".into(), AnyValue::Type(AnyType::Null));
         global.insert("Integer".into(), AnyValue::Type(AnyType::Integer));
+        global.insert("Function".into(), AnyValue::Type(AnyType::Function));
 
         State {
             scopes: vec![global, HashMap::new()],
