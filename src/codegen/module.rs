@@ -1,5 +1,5 @@
 use crate::{
-    builder,
+    builder::{self, Type},
     nscript::{self, environment::Environment, module::StateMutRef},
     parser::Expression,
 };
@@ -49,6 +49,14 @@ impl Module {
                     .add_function("main".into(), &[], &[], &[], &body);
 
                 module_env.builder.add_export("main".into(), None);
+
+                module_env.builder.import_function(
+                    "print".into(),
+                    "global".into(),
+                    None,
+                    &[Type::Int32],
+                    &[],
+                );
             }
 
             module_env.builder
@@ -59,11 +67,19 @@ impl Module {
         Self(builder)
     }
 
+    pub fn auto_drop(&self) {
+        self.0.auto_drop()
+    }
+
     pub fn optimize(&self) {
         self.0.optimize()
     }
 
     pub fn print(&self) {
         self.0.print()
+    }
+
+    pub fn build(&self) -> Vec<u8> {
+        self.0.build()
     }
 }

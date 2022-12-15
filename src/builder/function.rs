@@ -1,5 +1,3 @@
-use std::ffi::CString;
-
 use binaryen_sys::*;
 
 use super::{block::block, cstring, cstring_to_ptr, type_::Type, Expr, Module};

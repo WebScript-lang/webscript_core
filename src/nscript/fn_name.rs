@@ -20,7 +20,7 @@ impl ToString for FnName {
     fn to_string(&self) -> String {
         match self {
             FnName::Name(name) => name.clone(),
-            FnName::Anonymous(uuid) => "<anonymous>".into(),
+            FnName::Anonymous(uuid) => uuid.to_string(),
         }
     }
 }

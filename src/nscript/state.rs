@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::{any_value::AnyValue, AnyType};
+use super::{any_value::AnyValue, values::Function, AnyType};
 
 pub struct State {
     scopes: Vec<HashMap<String, AnyValue>>,
@@ -14,6 +14,16 @@ impl State {
         global.insert("null".into(), AnyValue::Type(AnyType::Null));
         global.insert("Integer".into(), AnyValue::Type(AnyType::Integer));
         global.insert("Function".into(), AnyValue::Type(AnyType::Function));
+
+        global.insert(
+            "print".into(),
+            Function::new(
+                Some("print".into()),
+                vec![("value".into(), AnyType::Integer)],
+                AnyType::Null,
+            )
+            .into(),
+        );
 
         State {
             scopes: vec![global, HashMap::new()],

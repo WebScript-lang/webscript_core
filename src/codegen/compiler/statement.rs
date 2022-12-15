@@ -53,7 +53,7 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> Value {
             .expect(&format!("Identifier '{name}' already exists"));
     }
 
-    // Create function scope
+    // Open function scope
     env.state.push_scope();
     for (index, (name, type_)) in args.into_iter().enumerate() {
         if type_.is_integer() {
@@ -77,6 +77,9 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> Value {
     for expr in data.body {
         body.push(codegen(env, expr).expr);
     }
+
+    // Close function scope
+    env.state.pop_scope();
 
     // Add function to a builder module
     env.builder.add_function(

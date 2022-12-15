@@ -32,5 +32,5 @@ pub fn call(env: &mut ModuleEnv, data: CallData) -> Value {
 
     let expr = Function::call(&env.builder, fn_.name().to_string(), &args, &return_type);
 
-    (expr, fn_.into()).into()
+    (expr, fn_.return_type().default_value()).into()
 }

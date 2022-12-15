@@ -8,11 +8,7 @@ pub fn null(env: &mut ModuleEnv) -> Value {
 }
 
 pub fn integer(env: &mut ModuleEnv, value: i32) -> Value {
-    (
-        env.int32.const_(value),
-        Integer::new(0, Store::Temporar).into(),
-    )
-        .into()
+    (env.int32.const_(value), Integer::value().into()).into()
 }
 
 pub fn identifier(env: &mut ModuleEnv, name: String) -> Value {

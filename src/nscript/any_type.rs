@@ -1,6 +1,6 @@
 use std::fmt::{Display, Error, Formatter};
 
-use super::AnyValue;
+use super::{values::Integer, AnyValue};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AnyType {
@@ -32,6 +32,14 @@ impl AnyType {
 
     pub fn is_function(&self) -> bool {
         matches!(self, AnyType::Function)
+    }
+
+    pub fn default_value(&self) -> AnyValue {
+        match self {
+            AnyType::Null => AnyValue::Null,
+            AnyType::Integer => Integer::value().into(),
+            AnyType::Function => unimplemented!(),
+        }
     }
 }
 

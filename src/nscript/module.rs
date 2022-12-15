@@ -27,11 +27,11 @@ impl Module {
         self.0.read().unwrap().path.clone()
     }
 
-    pub fn state(&self) -> RwLockReadGuard<ModuleData> {
+    pub fn state(&self) -> StateRef {
         self.0.read().unwrap()
     }
 
-    pub fn state_mut(&self) -> RwLockWriteGuard<ModuleData> {
+    pub fn state_mut(&self) -> StateMutRef {
         self.0.write().unwrap()
     }
 }

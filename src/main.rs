@@ -1,7 +1,10 @@
-use std::{env, path::PathBuf};
+use std::{env, fs::File, io::Write, path::PathBuf};
 
 use codegen::Module;
 use nscript::Environment;
+
+use anyhow::{anyhow, bail, Result};
+use wasmtime::*;
 
 mod builder;
 mod codegen;
@@ -9,7 +12,7 @@ mod nscript;
 mod parser;
 mod tokenizer;
 
-fn main() {
+fn main() -> Result<()> {
     // Enable better panic.
     better_panic::install();
 
@@ -17,8 +20,7 @@ fn main() {
     let path = match env::args().nth(1) {
         Some(path) => PathBuf::from(path),
         None => {
-            eprintln!("Usage: nscript <path>");
-            return;
+            bail!("Usage: nscript <path>");
         }
     };
 
@@ -29,31 +31,32 @@ fn main() {
             let path = if path.is_absolute() {
                 path
             } else {
-                env::current_dir().unwrap().join(&path)
+                env::current_dir()?.join(&path)
             };
 
             let path = path.to_str().unwrap();
 
-            eprintln!("Failed to open a file \"{path}\n{err}\"");
-            return;
+            bail!(anyhow!(err).context(format!("Failed to open a file \"{path}\"")));
         }
     };
 
+    // Tokenizer
     let tokens = tokenizer::parse(script.as_str());
-
+    let mut file = File::create("target/output.tokens")?;
     for token in &tokens {
-        println!(
+        writeln!(
+            file,
             "[{}:{} {}:{}] {}",
             token.start.line, token.start.column, token.end.line, token.end.column, token.value
-        );
+        )?;
     }
 
-    println!("\n ----- \n");
-
+    // Parser
+    let mut file = File::create("target/output.ast")?;
     let ast = match parser::parse(&tokens) {
         Ok(exprs) => {
             for expr in &exprs {
-                println!("{expr:?}");
+                writeln!(file, "{expr:?}")?;
             }
 
             exprs
@@ -63,17 +66,35 @@ fn main() {
                 .map_position(|pos| tokens[pos].start)
                 .map_token(|token| token.value);
 
-            println!("{err:?}");
-            panic!()
+            bail!("{err:?}");
         }
     };
 
-    println!("\n ----- \n");
-
+    // Compilation
     let env = Environment::new();
-
     let wasm = Module::compile(&env, path.to_str().unwrap().into(), ast, true);
 
-    // wasm.optimize();
-    wasm.print();
+    wasm.auto_drop();
+    wasm.optimize();
+    // wasm.print();
+    let output = wasm.build();
+
+    let mut file = File::create("target/output.wasm")?;
+    file.write(&output).unwrap();
+
+    // Wasmtime
+    let engine = Engine::default();
+    let module = wasmtime::Module::new(&engine, output)?;
+
+    let mut store = Store::new(&engine, 4);
+    let print = Func::wrap(&mut store, |_: Caller<u32>, param: i32| {
+        println!("{param}");
+    });
+
+    let instance = Instance::new(&mut store, &module, &[print.into()])?;
+    let fn_main = instance.get_typed_func::<(), (), _>(&mut store, "main")?;
+
+    fn_main.call(&mut store, ())?;
+
+    Ok(())
 }

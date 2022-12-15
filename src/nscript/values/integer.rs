@@ -11,10 +11,10 @@ impl Integer {
         Self { index, store }
     }
 
-    pub fn temporar() -> Self {
+    pub fn value() -> Self {
         Self {
             index: 0,
-            store: Store::Temporar,
+            store: Store::Value,
         }
     }
 }

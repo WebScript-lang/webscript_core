@@ -16,8 +16,12 @@ pub mod values;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Store {
-    Temporar,
+    /// Temporar value on stack
+    Value,
+    /// Function argument or local variable
     Local,
+    /// In-memory stack
     Stack,
+    /// Memory
     Memory,
 }

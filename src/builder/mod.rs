@@ -2,7 +2,6 @@ use std::ffi::CString;
 use std::os::raw::c_char;
 
 mod block;
-mod export;
 mod expr;
 mod function;
 mod module;
@@ -10,7 +9,6 @@ mod type_;
 
 mod instructions;
 
-pub use export::Export;
 pub use expr::Expr;
 pub use function::Function;
 pub use module::Module;

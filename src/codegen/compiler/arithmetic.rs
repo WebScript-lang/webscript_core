@@ -9,7 +9,7 @@ pub fn add(env: &mut ModuleEnv, a: Expression, b: Expression) -> Value {
     let b = codegen(env, b);
 
     if a.value.is_integer() && b.value.is_integer() {
-        (env.int32.add(a.expr, b.expr), Integer::temporar().into()).into()
+        (env.int32.add(a.expr, b.expr), Integer::value().into()).into()
     } else {
         unimplemented!()
     }
