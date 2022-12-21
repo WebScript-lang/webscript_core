@@ -6,7 +6,7 @@ use crate::{
 /// Get `AnyType` from string
 pub fn get_type(state: &StateMutRef, type_name: &str) -> AnyType {
     state
-        .get(&type_name)
+        .get(type_name)
         .expect(&format!("Undefined type: '{type_name}'"))
         .into_type()
         .expect(&format!("Identifier '{type_name}' is not a type"))

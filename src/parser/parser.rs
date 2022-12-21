@@ -1,30 +1,13 @@
 use combine::stream::position::Stream as PositionStream;
-use combine::{choice, Positioned};
+use combine::Positioned;
 use combine::{
     easy::Errors,
-    parser,
     parser::{repeat, EasyParser},
-    Stream,
 };
 
-use crate::tokenizer::TokenWithPosition;
-
-use super::operations::operation;
-use super::statements::statement;
-use super::tokens::identifier;
+use super::expression;
 use super::{tokens::terminator, Expression};
-
-parser! {
-    pub fn expression[I]()(I) -> Expression
-    where [ I: Stream<Token=TokenWithPosition> ] {
-
-        choice!(
-            statement(),
-            operation(),
-            identifier().map(|name| Expression::Identifier(name))
-        )
-    }
-}
+use crate::tokenizer::TokenWithPosition;
 
 pub fn parse(
     tokens: &[TokenWithPosition],

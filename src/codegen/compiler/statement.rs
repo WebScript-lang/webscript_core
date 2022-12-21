@@ -1,94 +1,51 @@
 use crate::{
-    codegen::{
-        codegen::codegen,
-        module::ModuleEnv,
-        utils::{get_type, to_builder_type},
-        Value,
-    },
-    nscript::{
-        values::{Function, Integer},
-        AnyType, AnyValue, FnName, Store,
-    },
-    parser::{Expression, FunctionData},
+    codegen::{codegen, module::ModuleEnv, utils::get_type, ExprValue, Memory},
+    parser::{Expression, LetData, VarData},
 };
 
-pub fn return_(env: &mut ModuleEnv, value: Expression) -> Value {
+pub fn return_(env: &mut ModuleEnv, value: Expression) -> ExprValue {
     let value = codegen(env, value);
 
     (env.op.return_(value.expr), value.value).into()
 }
 
-pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> Value {
-    // Get args types
-    let mut args = Vec::with_capacity(data.args.len());
-    for (name, type_name) in &data.args {
-        args.push((name.clone(), get_type(&env.state, &type_name)))
-    }
+pub fn var(env: &mut ModuleEnv, data: VarData) -> ExprValue {
+    let type_ = data.type_.map(|type_| get_type(&env.state, &type_));
+    let value = data.value.map(|value| codegen(env, value));
 
-    // Get return type
-    let return_type = if let Some(return_type) = data.return_type {
-        get_type(&env.state, &return_type)
-    } else {
-        AnyType::Null
-    };
-
-    // Convert args to builder types
-    let mut builder_args = Vec::with_capacity(args.len());
-    for (_, arg) in &args {
-        builder_args.extend_from_slice(&to_builder_type(&arg));
-    }
-
-    // Create the function
-    let function = Function::new(data.name, args.clone(), return_type.clone());
-
-    // Get internal name of function
-    // TODO: nested functions should include the whole path
-    let fn_name = function.name().to_string();
-
-    // If function is named, add it to the module
-    if let FnName::Name(name) = function.name() {
-        let name = name.clone();
-        env.state
-            .add(name.clone(), function.clone().into())
-            .expect(&format!("Identifier '{name}' already exists"));
-    }
-
-    // Open function scope
-    env.state.push_scope();
-    for (index, (name, type_)) in args.into_iter().enumerate() {
-        if type_.is_integer() {
-            env.state
-                .add(
-                    name,
-                    Integer {
-                        index: index as u32,
-                        store: Store::Local,
-                    }
-                    .into(),
-                )
-                .unwrap();
-        } else {
-            unimplemented!();
+    if let (Some(type_), Some(value)) = (&type_, &value) {
+        if value.value.get_type() != *type_ {
+            panic!("Incompatible types");
         }
     }
 
-    // Compile function's body
-    let mut body = Vec::with_capacity(data.body.len());
-    for expr in data.body {
-        body.push(codegen(env, expr).expr);
+    let type_ = type_
+        .or_else(|| value.clone().map(|val| val.value.get_type()))
+        .expect("You need to specify a type or initial value");
+
+    let value = value.or_else(|| unimplemented!("default value")).unwrap();
+
+    let value = Memory::add_local(env, value);
+    env.state
+        .add(data.name.clone(), value.value.clone())
+        .expect(&format!("Identifier {} already exists", data.name));
+
+    value
+}
+
+pub fn let_(env: &mut ModuleEnv, data: LetData) -> ExprValue {
+    let type_ = data.type_.map(|type_| get_type(&env.state, &type_));
+    let value = codegen(env, data.value);
+
+    if let Some(type_) = &type_ {
+        if value.value.get_type() != *type_ {
+            panic!("Incompatible types");
+        }
     }
 
-    // Close function scope
-    env.state.pop_scope();
+    let type_ = type_
+        .or_else(|| Some(value.value.get_type()))
+        .expect("You need to specify a type or initial value");
 
-    // Add function to a builder module
-    env.builder.add_function(
-        fn_name,
-        &builder_args,
-        &to_builder_type(&return_type),
-        &[],
-        &body,
-    );
-
-    (env.op.nop(), AnyValue::Function(function)).into()
+    todo!()
 }

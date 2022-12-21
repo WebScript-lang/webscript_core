@@ -4,7 +4,7 @@ use crate::{
     parser::Expression,
 };
 
-use super::*;
+use super::{utils::to_builder_type, *};
 
 pub struct Module(builder::Module);
 
@@ -44,9 +44,15 @@ impl Module {
 
             // Add main function to the builder module
             if is_main {
+                let locals = module_env.state.current_function().locals();
+                let mut main_locals = Vec::with_capacity(locals.len());
+                for local in locals {
+                    main_locals.extend_from_slice(&to_builder_type(&local));
+                }
+
                 module_env
                     .builder
-                    .add_function("main".into(), &[], &[], &[], &body);
+                    .add_function("main".into(), &[], &[], &main_locals, &body);
 
                 module_env.builder.add_export("main".into(), None);
 

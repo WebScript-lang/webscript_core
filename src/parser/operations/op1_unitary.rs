@@ -4,7 +4,9 @@ use crate::{
 };
 use combine::{choice, parser, Stream};
 
-use super::{highest_operation, operation};
+use super::operation;
+
+use super::op0_highest::highest_operation;
 
 parser! {
     /// Unitary operator (- + ! ~)

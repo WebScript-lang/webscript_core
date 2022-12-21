@@ -1,6 +1,8 @@
 use std::fmt::{Display, Error, Formatter};
 
-use super::{values::*, AnyType, FnName};
+use crate::nscript::{AnyType, FnName};
+
+use super::*;
 
 #[derive(Clone)]
 pub enum AnyValue {
@@ -20,12 +22,30 @@ pub enum AnyValue {
 }
 
 impl AnyValue {
+    pub fn get_store(&self) -> Store {
+        match self {
+            AnyValue::Null => Store::Value,
+            AnyValue::Integer(value) => value.get_store(),
+            AnyValue::Function(value) => value.get_store(),
+            AnyValue::Type(type_) => Store::Value,
+        }
+    }
+
     pub fn get_type(&self) -> AnyType {
         match self {
             AnyValue::Null => AnyType::Null,
             AnyValue::Integer(_) => AnyType::Integer,
             AnyValue::Function(_) => AnyType::Function,
             AnyValue::Type(type_) => type_.clone(),
+        }
+    }
+
+    pub fn satisfy(&self, type_: AnyType) -> bool {
+        match self {
+            AnyValue::Null => type_.is_null(),
+            AnyValue::Integer(value) => value.satisfy(type_),
+            AnyValue::Function(value) => value.satisfy(type_),
+            AnyValue::Type(value) => value.is_assignable_to(type_),
         }
     }
 

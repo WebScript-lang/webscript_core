@@ -4,6 +4,8 @@ use uuid::Uuid;
 
 use crate::nscript::{AnyType, AnyValue, FnName};
 
+use super::{Store, Value};
+
 #[derive(Clone)]
 pub struct Function(Rc<FunctionData>);
 
@@ -37,6 +39,20 @@ impl Function {
 
     pub fn return_type(&self) -> AnyType {
         self.return_type.clone()
+    }
+}
+
+impl Value for Function {
+    fn get_store(&self) -> Store {
+        Store::Global
+    }
+
+    fn get_type(&self) -> AnyType {
+        AnyType::Function
+    }
+
+    fn satisfy(&self, type_: AnyType) -> bool {
+        type_.is_function()
     }
 }
 

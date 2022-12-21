@@ -1,17 +1,17 @@
 use crate::{
-    codegen::{module::ModuleEnv, Value},
-    nscript::{values::Integer, AnyValue, Store},
+    codegen::{module::ModuleEnv, ExprValue},
+    nscript::{values::Integer, AnyValue},
 };
 
-pub fn null(env: &mut ModuleEnv) -> Value {
+pub fn null(env: &mut ModuleEnv) -> ExprValue {
     (env.op.nop(), AnyValue::Null).into()
 }
 
-pub fn integer(env: &mut ModuleEnv, value: i32) -> Value {
-    (env.int32.const_(value), Integer::value().into()).into()
+pub fn integer(env: &mut ModuleEnv, value: i32) -> ExprValue {
+    (env.int32.const_(value), Integer::new_value().into()).into()
 }
 
-pub fn identifier(env: &mut ModuleEnv, name: String) -> Value {
+pub fn identifier(env: &mut ModuleEnv, name: String) -> ExprValue {
     let value = env
         .state
         .get(&name)
@@ -20,10 +20,14 @@ pub fn identifier(env: &mut ModuleEnv, name: String) -> Value {
     match value.clone() {
         AnyValue::Null => (env.op.nop(), AnyValue::Null).into(),
         AnyValue::Integer(val) => {
-            if val.store == Store::Local {
-                (env.int32.get_local(val.index), value).into()
+            if val.is_local() || val.is_param() {
+                (
+                    env.int32.get_local(val.index()),
+                    Integer::new_value().into(),
+                )
+                    .into()
             } else {
-                todo!()
+                todo!("{val:?}")
             }
         }
         AnyValue::Function(fn_) => (env.op.nop(), fn_.into()).into(),

@@ -37,8 +37,16 @@ impl AnyType {
     pub fn default_value(&self) -> AnyValue {
         match self {
             AnyType::Null => AnyValue::Null,
-            AnyType::Integer => Integer::value().into(),
+            AnyType::Integer => Integer::new_value().into(),
             AnyType::Function => unimplemented!(),
+        }
+    }
+
+    pub fn is_assignable_to(&self, type_: AnyType) -> bool {
+        match type_ {
+            AnyType::Null => self.is_null(),
+            AnyType::Integer => self.is_integer(),
+            AnyType::Function => self.is_function(),
         }
     }
 }

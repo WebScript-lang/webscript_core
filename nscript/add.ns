@@ -1,5 +1,7 @@
 fn add(a: Integer, b: Integer) -> Integer {
-    return a + b
+    var x = a + b
+    return x + 1
 }
 
-print(add(2, 3))
+var x = 4
+print(add(x, 3))

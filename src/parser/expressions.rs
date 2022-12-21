@@ -1,3 +1,21 @@
+use combine::{choice, parser, Stream};
+
+use crate::tokenizer::TokenWithPosition;
+
+use super::{operation, statements::statement};
+
+parser! {
+    /// Any expression (statement or operation)
+    pub fn expression[I]()(I) -> Expression
+    where [ I: Stream<Token=TokenWithPosition> ] {
+
+        choice((
+            statement(),
+            operation(),
+        ))
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Expression {
     Null,

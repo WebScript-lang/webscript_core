@@ -1,5 +1,5 @@
 use crate::{
-    parser::{parser::expression, tokens::*, Expression},
+    parser::{operations::operation, tokens::*, Expression},
     tokenizer::TokenWithPosition,
 };
 use combine::{optional, parser, Stream};
@@ -7,13 +7,12 @@ use combine::{optional, parser, Stream};
 parser! {
     /// Syntax:
     /// ```
-    /// return [<expression>]
+    /// return [<operation>]
     pub fn return_[I]()(I) -> Expression
     where [ I: Stream<Token=TokenWithPosition> ] {
 
-        ignore_newlines!(
-            keyword(Keyword::Return),
-            optional(expression()), // value
+        keyword(Keyword::Return).and(
+            optional(operation())
         )
 
         .map(|(_, value)| Expression::Return (

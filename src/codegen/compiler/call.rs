@@ -1,10 +1,10 @@
 use crate::{
     builder::Function,
-    codegen::{codegen::codegen, module::ModuleEnv, utils::to_builder_type, Value},
+    codegen::{codegen, module::ModuleEnv, utils::to_builder_type, ExprValue},
     parser::CallData,
 };
 
-pub fn call(env: &mut ModuleEnv, data: CallData) -> Value {
+pub fn call(env: &mut ModuleEnv, data: CallData) -> ExprValue {
     let fn_ = codegen(env, data.ref_).value;
 
     let fn_ = fn_

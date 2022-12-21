@@ -1,5 +1,5 @@
 use crate::{
-    parser::{parser::expression, tokens::*, Expression, FunctionData},
+    parser::{expression, tokens::*, Expression, FunctionData},
     tokenizer::TokenWithPosition,
 };
 use combine::{optional, parser, parser::repeat, Stream};
@@ -37,6 +37,7 @@ parser! {
                 punctuator(Punctuator::RightBrace),
             )
         )
+
         .map(|(name, _, args, _, return_type, _, body, _)| Expression::Function(Box::new(FunctionData {
             name: Some(name),
             args,
