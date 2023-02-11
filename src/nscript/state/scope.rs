@@ -5,7 +5,7 @@ use std::{
 
 use crate::nscript::{
     values::{Function, Store},
-    AnyType, AnyValue,
+    AnyType, AnyValue, Name,
 };
 
 pub struct Scope(HashMap<String, AnyValue>);
@@ -27,7 +27,7 @@ impl Scope {
         global.insert(
             "print".into(),
             Function::new(
-                Some("print".into()),
+                Name::new(Some("print".into()), None),
                 vec![("value".into(), AnyType::Integer)],
                 AnyType::Null,
             )

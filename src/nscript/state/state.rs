@@ -93,9 +93,8 @@ impl State {
 
     /// Add a function to the top of the function trace.
     /// Returns the code name of the function.
-    pub fn push_function(&mut self, func: Function) -> String {
+    pub fn push_function(&mut self, func: Function) {
         self.func_trace.push(FunctionScope::new(func));
-        self.current_function_codename()
     }
 
     /// Remove the topmost function from the function trace
@@ -114,12 +113,13 @@ impl State {
     }
 
     /// Get the code name of the current function
-    fn current_function_codename(&self) -> String {
-        let mut names = Vec::with_capacity(self.func_trace.len());
-        for func in (&self.func_trace).into_iter().skip(1) {
-            names.push(func.func().name().to_string());
+    pub fn current_function_codename(&self) -> Option<String> {
+        if self.func_trace.len() == 1 {
+            return None;
+        } else {
+            let func = self.func_trace.last().unwrap();
+            return Some(func.func().name().codename());
         }
-        String::from(names.join("."))
     }
 
     // === Get/Add/Set ===

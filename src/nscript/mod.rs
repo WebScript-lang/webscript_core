@@ -1,15 +1,15 @@
 pub mod environment;
 pub mod module;
 
-mod any_type;
-mod fn_name;
+mod name;
 mod state;
+mod types;
 
-pub use any_type::AnyType;
 pub use environment::Environment;
-pub use fn_name::FnName;
 pub use module::Module;
+pub use name::Name;
 pub use state::{FunctionScope, Scope, State};
+pub use types::AnyType;
 pub use values::AnyValue;
 
 pub mod values;

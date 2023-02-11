@@ -1,4 +1,4 @@
-use crate::nscript::{values::Function, AnyType, AnyValue};
+use crate::nscript::{values::Function, AnyType, AnyValue, Name};
 
 pub struct FunctionScope {
     func: Function,
@@ -20,7 +20,7 @@ impl FunctionScope {
     /// Create global function scope (main)
     pub fn create_global() -> Self {
         Self::new(Function::new(
-            Some("main".into()),
+            Name::new(Some("main".into()), None),
             Vec::new(),
             AnyType::Null,
         ))

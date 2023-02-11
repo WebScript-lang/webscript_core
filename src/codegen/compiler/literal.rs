@@ -31,6 +31,7 @@ pub fn identifier(env: &mut ModuleEnv, name: String) -> ExprValue {
             }
         }
         AnyValue::Function(fn_) => (env.op.nop(), fn_.into()).into(),
+        AnyValue::Class(class) => (env.op.nop(), class.into()).into(),
         AnyValue::Type(type_) => (env.op.nop(), type_.into()).into(),
     }
 }

@@ -3,6 +3,7 @@ use crate::tokenizer::TokenWithPosition;
 
 use combine::{choice, parser, Stream};
 
+mod class;
 mod fn_;
 mod return_;
 mod var;
@@ -15,6 +16,7 @@ parser! {
 
         choice((
             fn_::fn_(),
+            class::class(),
             var::var(),
             return_::return_(),
         ))

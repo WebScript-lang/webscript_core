@@ -2,26 +2,22 @@ use std::{ops::Deref, rc::Rc};
 
 use uuid::Uuid;
 
-use crate::nscript::{AnyType, AnyValue, FnName};
+use crate::nscript::{AnyType, AnyValue, Name};
 
 use super::{Store, Value};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Function(Rc<FunctionData>);
 
+#[derive(Debug)]
 pub struct FunctionData {
-    name: FnName,
+    name: Name,
     args: Vec<(String, AnyType)>,
     return_type: AnyType,
 }
 
 impl Function {
-    pub fn new(name: Option<String>, args: Vec<(String, AnyType)>, return_type: AnyType) -> Self {
-        let name = name.map_or_else(
-            || FnName::Anonymous(Uuid::new_v4()),
-            |name| FnName::Name(name),
-        );
-
+    pub fn new(name: Name, args: Vec<(String, AnyType)>, return_type: AnyType) -> Self {
         Self(Rc::new(FunctionData {
             name,
             args,
@@ -29,7 +25,7 @@ impl Function {
         }))
     }
 
-    pub fn name(&self) -> &FnName {
+    pub fn name(&self) -> &Name {
         &self.name
     }
 

@@ -15,6 +15,7 @@ pub fn codegen(env: &mut ModuleEnv, expression: Expression) -> ExprValue {
         Expression::Function(data) => fn_::fn_(env, *data),
         Expression::Call(data) => call::call(env, *data),
         Expression::Return(data) => statement::return_(env, *data),
+        Expression::Class(data) => class::class(env, *data),
         _ => unimplemented!("codegen for {expression:?}"),
     }
 }

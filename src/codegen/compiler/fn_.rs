@@ -7,7 +7,7 @@ use crate::{
     },
     nscript::{
         values::{Function, Integer},
-        AnyType, AnyValue, FnName,
+        AnyType, AnyValue, Name,
     },
     parser::FunctionData,
 };
@@ -33,10 +33,15 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> ExprValue {
     }
 
     // Create the function
-    let function = Function::new(data.name, args.clone(), return_type.clone());
+    let scopeName = env.state.current_function_codename();
+    let function = Function::new(
+        Name::new(data.name, scopeName),
+        args.clone(),
+        return_type.clone(),
+    );
 
     // If function is named, add it to the module
-    if let FnName::Name(name) = function.name() {
+    if let Name::Name { name, .. } = function.name() {
         let name = name.clone();
         env.state
             .add(name.clone(), function.clone().into())
@@ -44,7 +49,7 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> ExprValue {
     }
 
     // Open function scope
-    let fn_name = env.state.push_function(function.clone());
+    env.state.push_function(function.clone());
     env.state.push_scope();
 
     for (index, (name, type_)) in args.into_iter().enumerate() {
@@ -76,7 +81,7 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> ExprValue {
 
     // Add function to a builder module
     env.builder.add_function(
-        fn_name,
+        function.name().codename(),
         &builder_args,
         &to_builder_type(&return_type),
         &builder_locals,

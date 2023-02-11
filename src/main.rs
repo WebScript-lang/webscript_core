@@ -75,8 +75,11 @@ fn main() -> Result<()> {
     let wasm = Module::compile(&env, path.to_str().unwrap().into(), ast, true);
 
     wasm.auto_drop();
-    // wasm.print();
+    wasm.print();
+    println!("\n ===== \n");
     wasm.optimize();
+    wasm.print();
+    println!("\n ===== \n");
     let output = wasm.build();
 
     let mut file = File::create("target/output.wasm")?;

@@ -1,6 +1,6 @@
 use std::fmt::{Display, Error, Formatter};
 
-use crate::nscript::{AnyType, FnName};
+use crate::nscript::{AnyType, Name};
 
 use super::*;
 
@@ -16,7 +16,7 @@ pub enum AnyValue {
     // Object(Object),
     // String(String),
     Function(Function),
-    // Class(Class),
+    Class(Class),
     // Ref(Box<AnyValue>),
     Type(AnyType),
 }
@@ -27,6 +27,7 @@ impl AnyValue {
             AnyValue::Null => Store::Value,
             AnyValue::Integer(value) => value.get_store(),
             AnyValue::Function(value) => value.get_store(),
+            AnyValue::Class(value) => value.get_store(),
             AnyValue::Type(type_) => Store::Value,
         }
     }
@@ -36,6 +37,7 @@ impl AnyValue {
             AnyValue::Null => AnyType::Null,
             AnyValue::Integer(_) => AnyType::Integer,
             AnyValue::Function(_) => AnyType::Function,
+            AnyValue::Class(_) => AnyType::Class,
             AnyValue::Type(type_) => type_.clone(),
         }
     }
@@ -45,6 +47,7 @@ impl AnyValue {
             AnyValue::Null => type_.is_null(),
             AnyValue::Integer(value) => value.satisfy(type_),
             AnyValue::Function(value) => value.satisfy(type_),
+            AnyValue::Class(value) => value.satisfy(type_),
             AnyValue::Type(value) => value.is_assignable_to(type_),
         }
     }
@@ -73,9 +76,9 @@ impl AnyValue {
     //     matches!(self, AnyValue::Object(_))
     // }
 
-    // pub fn is_class(&self) -> bool {
-    //     matches!(self, AnyValue::Class(_))
-    // }
+    pub fn is_class(&self) -> bool {
+        matches!(self, AnyValue::Class(_))
+    }
 
     // pub fn is_ref(&self) -> bool {
     //     matches!(self, AnyValue::Ref(_))
@@ -86,34 +89,37 @@ impl AnyValue {
     }
 
     pub fn into_null(self) -> Option<Null> {
-        if let AnyValue::Null = self {
-            Some(Null)
-        } else {
-            None
+        match self {
+            AnyValue::Null => Some(Null),
+            _ => None,
         }
     }
 
     pub fn into_integer(self) -> Option<Integer> {
-        if let AnyValue::Integer(value) = self {
-            Some(value)
-        } else {
-            None
+        match self {
+            AnyValue::Integer(value) => Some(value),
+            _ => None,
         }
     }
 
     pub fn into_function(self) -> Option<Function> {
-        if let AnyValue::Function(value) = self {
-            Some(value)
-        } else {
-            None
+        match self {
+            AnyValue::Function(value) => Some(value),
+            _ => None,
+        }
+    }
+
+    pub fn into_class(self) -> Option<Class> {
+        match self {
+            AnyValue::Class(value) => Some(value),
+            _ => None,
         }
     }
 
     pub fn into_type(self) -> Option<AnyType> {
-        if let AnyValue::Type(value) = self {
-            Some(value)
-        } else {
-            None
+        match self {
+            AnyValue::Type(value) => Some(value),
+            _ => None,
         }
     }
 }
@@ -126,25 +132,19 @@ impl Display for AnyValue {
             // AnyValue::Number(_) => write!(f, "Number"),
             // AnyValue::Boolean(_) => write!(f, "Boolean"),
             AnyValue::Function(function) => {
-                // write!(f, "fn {}(", function.name().to_string())?;
-                if let FnName::Name(name) = function.name() {
-                    write!(f, "fn {name}(")?;
-                } else {
-                    write!(f, "fn (")?;
-                }
-                let mut first = true;
-                for (name, type_) in function.args() {
-                    if first {
-                        first = false
-                    } else {
-                        write!(f, ", ")?
-                    }
+                let name = function.name().name().unwrap_or_default();
+                let args = function
+                    .args()
+                    .iter()
+                    .map(|(name, type_)| format!("{name}: {type_}"))
+                    .collect::<Vec<String>>()
+                    .join(", ");
 
-                    write!(f, "{name}: {type_}")?
-                }
-                write!(f, ") -> {}", function.return_type())
+                write!(f, "fn {}({}) -> {}", name, args, function.return_type())
             }
-            // AnyValue::Class(class) => write!(f, "Class({})", class.name_or_default()),
+            AnyValue::Class(class) => {
+                write!(f, "class {}", class.name().name().unwrap_or_default())
+            }
             // AnyValue::Object(object) => write!(f, "Object({})", object.class().name_or_default()),
             // AnyValue::Ref(ref_) => write!(f, "ref {:?}", ref_.type_),
             AnyValue::Type(type_) => write!(f, "type {}", type_),

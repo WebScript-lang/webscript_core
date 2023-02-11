@@ -71,6 +71,7 @@ pub enum Expression {
     Function(Box<FunctionData>),
     Call(Box<CallData>),
     Return(Box<Expression>),
+    Class(Box<ClassData>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -105,4 +106,12 @@ pub struct FunctionData {
 pub struct CallData {
     pub ref_: Expression,
     pub args: Vec<Expression>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ClassData {
+    pub name: Option<String>,
+    pub fields: Vec<(String, String)>,
+    pub methods: Vec<(String, Expression)>,
+    pub parent: Option<String>,
 }

@@ -18,5 +18,6 @@ pub fn to_builder_type(type_: &AnyType) -> Vec<Type> {
         AnyType::Null => vec![],
         AnyType::Integer => vec![Type::Int32],
         AnyType::Function => vec![],
+        AnyType::Class => vec![],
     }
 }

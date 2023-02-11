@@ -1,0 +1,6 @@
+class Vector {
+  x: Integer;
+  y: Integer;
+}
+
+print(3)
