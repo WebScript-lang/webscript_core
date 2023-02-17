@@ -1,6 +1,6 @@
 use std::fmt::{Display, Error, Formatter};
 
-use crate::nscript::{AnyType, Name};
+use crate::environment::AnyType;
 
 use super::*;
 

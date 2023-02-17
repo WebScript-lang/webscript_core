@@ -1,15 +1,7 @@
 use crate::{
-    codegen::{
-        codegen,
-        module::ModuleEnv,
-        utils::{get_type, to_builder_type},
-        ExprValue,
-    },
-    nscript::{
-        values::{Class, Function, Integer},
-        AnyType, AnyValue, Name,
-    },
-    parser::{ClassData, Expression},
+    codegen::{codegen, module::ModuleEnv, utils::get_type, ExprValue},
+    environment::{values::Class, Name},
+    parser::ClassData,
 };
 
 pub fn class(env: &mut ModuleEnv, data: ClassData) -> ExprValue {
@@ -29,9 +21,9 @@ pub fn class(env: &mut ModuleEnv, data: ClassData) -> ExprValue {
     }
 
     // Create the class
-    let scopeName = env.state.current_function_codename();
+    let scope_name = env.state.current_function_codename();
     let class = Class::new(
-        Name::new(data.name, scopeName),
+        Name::new(data.name, scope_name),
         fields.clone(),
         methods.clone(),
         None,

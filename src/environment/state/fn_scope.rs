@@ -1,4 +1,4 @@
-use crate::nscript::{values::Function, AnyType, AnyValue, Name};
+use crate::environment::{values::Function, AnyType, AnyValue, Name};
 
 pub struct FunctionScope {
     func: Function,

@@ -2,7 +2,7 @@ use crate::{
     parser::{tokens::*, AssignData, Expression},
     tokenizer::TokenWithPosition,
 };
-use combine::{choice, optional, parser, parser::repeat, Stream};
+use combine::{choice, parser, Stream};
 
 use super::op0_highest::assignable_operation;
 use super::op9_logical::logical_or_operation;

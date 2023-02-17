@@ -1,4 +1,4 @@
-use crate::nscript::{values::Integer, AnyType};
+use crate::environment::{values::Integer, AnyType};
 
 use super::{module::ModuleEnv, ExprValue};
 

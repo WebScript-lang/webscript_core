@@ -1,10 +1,8 @@
 use crate::{
-    parser::{expression, tokens::*, ClassData, Expression, FunctionData},
+    parser::{tokens::*, ClassData, Expression},
     tokenizer::TokenWithPosition,
 };
-use combine::{optional, parser, parser::repeat, Stream};
-
-use super::fn_::fn_;
+use combine::{parser, parser::repeat, Stream};
 
 parser! {
     /// Syntax:

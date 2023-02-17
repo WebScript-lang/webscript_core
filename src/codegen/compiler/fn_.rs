@@ -5,7 +5,7 @@ use crate::{
         utils::{get_type, to_builder_type},
         ExprValue,
     },
-    nscript::{
+    environment::{
         values::{Function, Integer},
         AnyType, AnyValue, Name,
     },
@@ -33,9 +33,9 @@ pub fn fn_(env: &mut ModuleEnv, data: FunctionData) -> ExprValue {
     }
 
     // Create the function
-    let scopeName = env.state.current_function_codename();
+    let scope_name = env.state.current_function_codename();
     let function = Function::new(
-        Name::new(data.name, scopeName),
+        Name::new(data.name, scope_name),
         args.clone(),
         return_type.clone(),
     );

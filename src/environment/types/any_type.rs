@@ -1,6 +1,6 @@
 use std::fmt::{Display, Error, Formatter};
 
-use crate::nscript::{values::Integer, AnyValue};
+use crate::environment::{values::Integer, AnyValue};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AnyType {

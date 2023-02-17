@@ -1,6 +1,6 @@
 use std::{ops::Deref, rc::Rc};
 
-use crate::nscript::{AnyType, Name};
+use crate::environment::{AnyType, Name};
 
 use super::{AnyValue, Function, Store, Value};
 

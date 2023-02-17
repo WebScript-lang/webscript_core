@@ -1,6 +1,6 @@
 use crate::{
     builder::Type,
-    nscript::{module::StateMutRef, AnyType},
+    environment::{AnyType, StateMutRef},
 };
 
 /// Get `AnyType` from string

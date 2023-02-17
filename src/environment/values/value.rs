@@ -1,4 +1,4 @@
-use crate::nscript::AnyType;
+use crate::environment::AnyType;
 
 use super::Store;
 

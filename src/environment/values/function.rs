@@ -1,8 +1,6 @@
 use std::{ops::Deref, rc::Rc};
 
-use uuid::Uuid;
-
-use crate::nscript::{AnyType, AnyValue, Name};
+use crate::environment::{AnyType, AnyValue, Name};
 
 use super::{Store, Value};
 

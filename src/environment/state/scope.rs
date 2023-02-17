@@ -3,10 +3,7 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-use crate::nscript::{
-    values::{Function, Store},
-    AnyType, AnyValue, Name,
-};
+use crate::environment::{values::Function, AnyType, AnyValue, Name};
 
 pub struct Scope(HashMap<String, AnyValue>);
 

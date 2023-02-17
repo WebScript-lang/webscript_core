@@ -1,4 +1,4 @@
-use crate::nscript::{values::Function, AnyValue};
+use crate::environment::{values::Function, AnyValue};
 
 use super::{FunctionScope, Scope};
 

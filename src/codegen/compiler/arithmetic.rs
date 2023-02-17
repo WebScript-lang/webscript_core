@@ -1,6 +1,6 @@
 use crate::{
     codegen::{codegen, module::ModuleEnv, ExprValue},
-    nscript::values::Integer,
+    environment::values::Integer,
     parser::Expression,
 };
 

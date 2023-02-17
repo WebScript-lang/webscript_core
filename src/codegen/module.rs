@@ -1,6 +1,6 @@
 use crate::{
     builder::{self, Type},
-    nscript::{self, environment::Environment, module::StateMutRef},
+    environment::{self, Environment, StateMutRef},
     parser::Expression,
 };
 
@@ -23,7 +23,7 @@ impl Module {
         is_main: bool,
     ) -> Self {
         let builder = builder::Module::new();
-        let module = nscript::Module::new(path);
+        let module = environment::Module::new(path);
 
         let builder = {
             let state = module.state_mut();

@@ -1,6 +1,6 @@
 use crate::{
     codegen::{module::ModuleEnv, ExprValue},
-    nscript::{values::Integer, AnyValue},
+    environment::{values::Integer, AnyValue},
 };
 
 pub fn null(env: &mut ModuleEnv) -> ExprValue {
